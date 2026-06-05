@@ -15,25 +15,25 @@ class CreateNewUser implements CreatesNewUsers
     /**
      * Validate and create a newly registered user.
      *
-     * @param  array<string, mixed>  $input
+     * @param  array<string, string>  $input
      */
     public function create(array $input): User
     {
         Validator::make($input, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => $this->passwordRules(),
-            'role' => ['nullable', 'in:buyer,agent'],
-            'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature()
-                ? ['accepted', 'required']
-                : '',
+            'first_name' => ['required', 'string', 'max:100'],
+            'last_name'  => ['required', 'string', 'max:100'],
+            'email'      => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'phone'      => ['nullable', 'string', 'max:20'],
+            'password'   => ['required', 'string', 'min:8', 'confirmed'],
+            'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['accepted', 'required'] : '',
         ])->validate();
 
         return User::create([
-            'name' => $input['name'],
-            'email' => $input['email'],
+            'name'     => $input['first_name'] . ' ' . $input['last_name'],
+            'email'    => $input['email'],
+            'phone'    => $input['phone'] ?? null,
             'password' => Hash::make($input['password']),
-            'role' => $input['role'] ?? 'buyer', // ✅ Safe default
+            'role'     => 'customer',
         ]);
     }
 }

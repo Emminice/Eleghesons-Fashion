@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Actions\Fortify\CreateNewUser;
+use App\Http\Responses\LoginResponse;
 use App\Actions\Fortify\ResetUserPassword;
 use App\Actions\Fortify\UpdateUserPassword;
 use App\Actions\Fortify\UpdateUserProfileInformation;
@@ -11,8 +12,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Laravel\Fortify\Actions\RedirectIfTwoFactorAuthenticatable;
 use Laravel\Fortify\Fortify;
-use Laravel\Fortify\Contracts\LoginResponse;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -21,7 +22,8 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Override the default login response to redirect users based on their role (admin vs customer).
+        $this->app->singleton(LoginResponse::class, LoginResponse::class);
     }
 
     /**
@@ -33,57 +35,23 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::updateUserProfileInformationUsing(UpdateUserProfileInformation::class);
         Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
+        Fortify::redirectUserForTwoFactorAuthenticationUsing(RedirectIfTwoFactorAuthenticatable::class);
 
-        // Rate limiting for login
+         // ──Register custom auth views ────────────────────────────────
+        Fortify::loginView(fn() => view('auth.login'));
+        Fortify::registerView(fn() => view('auth.register'));
+        
+        // Custom user creation (handles first_name + last_name)
+        Fortify::createUsersUsing(CreateNewUser::class);
+
         RateLimiter::for('login', function (Request $request) {
-            $throttleKey = Str::transliterate(
-                Str::lower($request->input(Fortify::username())) . '|' . $request->ip()
-            );
+            $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())).'|'.$request->ip());
 
             return Limit::perMinute(5)->by($throttleKey);
         });
 
-        // Rate limiting for two-factor
         RateLimiter::for('two-factor', function (Request $request) {
-            return Limit::perMinute(5)->by(
-                $request->session()->get('login.id')
-            );
-        });
-
-        // Role-based login redirection
-        $this->app->singleton(LoginResponse::class, function () {
-            return new class implements LoginResponse {
-                public function toResponse($request)
-                {
-                    $role = auth()->user()->role;
-
-                    return match ($role) {
-                        'admin' => redirect()->route('admin.dashboard'),
-                        'agent' => redirect()->route('agent.dashboard'),
-                        'buyer' => redirect()->route('buyer.dashboard'),
-                        default => redirect('/'),
-                    };
-                }
-            };
+            return Limit::perMinute(5)->by($request->session()->get('login.id'));
         });
     }
 }
-
-
-        // ✅ ROLE-BASED LOGIN REDIRECTION (CORRECT WAY)
-        // $this->app->singleton(LoginResponse::class, function () {
-        //     return new class implements LoginResponse {
-        //         public function toResponse($request)
-        //         {
-        //             $user = auth()->user();
-
-        //             return match ($user->role) {
-        //                 'admin' => redirect()->route('admin.dashboard'),
-        //                 'agent' => redirect()->route('agent.dashboard'),
-        //                 'buyer' => redirect()->route('buyer.dashboard'),
-        //                 default => redirect('/'),
-        //             };
-        //         }
-        //     };
-        // });
-

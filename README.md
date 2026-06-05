@@ -1,59 +1,242 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# ThreadHouse — Laravel E-Commerce
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A full-featured clothing store built with **Laravel 11 + Jetstream + Livewire + Tailwind (custom CSS) + MySQL**.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🗂 Project Structure
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+```
+threadhouse/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── ShopController.php              # Public store
+│   │   │   ├── Admin/DashboardController.php   # All admin pages
+│   │   │   └── Customer/
+│   │   │       ├── DashboardController.php     # Customer dashboard
+│   │   │       └── AddressController.php       # Address CRUD
+│   │   └── Middleware/
+│   │       └── AdminMiddleware.php             # Admin gate
+│   ├── Livewire/
+│   │   ├── Shop/
+│   │   │   ├── Cart.php                        # Live cart
+│   │   │   ├── AddToCart.php                   # Size/color/qty picker
+│   │   │   ├── Checkout.php                    # 3-step checkout
+│   │   │   └── WishlistToggle.php              # Heart button
+│   │   └── Admin/
+│   │       └── OrdersTable.php                 # Live search/filter orders
+│   └── Models/
+│       ├── User.php
+│       ├── Category.php
+│       ├── Product.php
+│       ├── Order.php
+│       ├── OrderItem.php
+│       ├── Address.php
+│       ├── Wishlist.php
+│       └── Coupon.php
+├── database/
+│   ├── migrations/                             # All 7 migrations
+│   └── seeders/DatabaseSeeder.php              # Demo data
+├── resources/
+│   ├── css/app.css                             # All styles (no Tailwind needed)
+│   ├── js/app.js
+│   └── views/
+│       ├── layouts/
+│       │   ├── app.blade.php                   # Public store layout
+│       │   ├── admin.blade.php                 # Admin layout
+│       │   └── customer.blade.php              # Customer dashboard layout
+│       ├── shop/                               # Home, product, cart, checkout, receipt
+│       ├── customer/                           # Dashboard, orders, wishlist, profile, addresses
+│       ├── admin/                              # Dashboard, orders, products, customers, coupons, settings
+│       └── livewire/                           # All Livewire component views
+└── routes/web.php
+```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## ⚡ Quick Setup
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### 1. Requirements
+- PHP 8.2+
+- Composer
+- Node.js 18+
+- MySQL 8.0+
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 2. Install
 
-## Laravel Sponsors
+```bash
+# Clone / unzip the project
+cd threadhouse
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+# Install PHP dependencies
+composer install
 
-### Premium Partners
+# Install Node dependencies
+npm install
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+# Copy environment file
+cp .env.example .env
 
-## Contributing
+# Generate app key
+php artisan key:generate
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 3. Configure MySQL
 
-## Code of Conduct
+Edit `.env`:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=threadhouse
+DB_USERNAME=root
+DB_PASSWORD=your_password
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Then create the database:
+```sql
+CREATE DATABASE threadhouse CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
 
-## Security Vulnerabilities
+### 4. Install Jetstream (Livewire stack)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+composer require laravel/jetstream
+php artisan jetstream:install livewire
+```
 
-## License
+### 5. Run Migrations & Seed
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+php artisan migrate
+php artisan db:seed
+```
+
+### 6. Storage Link
+
+```bash
+php artisan storage:link
+```
+
+### 7. Build Assets
+
+```bash
+# Development
+npm run dev
+
+# Production
+npm run build
+```
+
+### 8. Serve
+
+```bash
+php artisan serve
+```
+
+Visit: **http://localhost:8000**
+
+---
+
+## 🔑 Demo Credentials
+
+| Role     | Email                        | Password   |
+|----------|------------------------------|------------|
+| Admin    | admin@threadhouse.ng         | password   |
+| Customer | customer@threadhouse.ng      | password   |
+
+---
+
+## 🛒 Feature Map
+
+### Public Store
+| Feature | Route |
+|---------|-------|
+| Home / product listing | `GET /` |
+| Filter by category | `GET /shop?category=mens-wear` |
+| Search products | `GET /shop?search=shirt` |
+| Product detail | `GET /product/{slug}` |
+| Cart | `GET /cart` |
+| Checkout (3-step) | `GET /checkout` |
+| Order receipt | `GET /order/receipt/{id}` |
+
+### Customer Dashboard (`/account/*`)
+- Overview with stats
+- Orders list + detail
+- Wishlist
+- Profile & password change
+- Saved addresses
+
+### Admin Panel (`/admin/*`)
+- Dashboard with revenue/orders/customers/products stats
+- Live order management (search, filter, update status)
+- Product CRUD (image upload, sizes, colors, badge, featured flag)
+- Category management
+- Customer management (activate/deactivate)
+- Coupon management (fixed ₦ or %, expiry, max uses)
+- Settings
+
+---
+
+## 🎟 Coupon Codes (seeded)
+
+| Code      | Discount         | Min Order |
+|-----------|------------------|-----------|
+| THREAD25  | ₦2,500 off       | ₦10,000   |
+| NEWUSER   | ₦1,000 off       | None      |
+| SAVE10    | 10% off          | ₦20,000   |
+
+---
+
+## 💳 Payment Methods
+
+All handled in the Livewire Checkout component:
+- **Pay on Delivery** — cash on arrival
+- **Debit/Credit Card** — card fields shown inline
+- **Bank Transfer** — bank account details shown with amount
+
+---
+
+## 📁 Image Uploads
+
+Product images are stored in `storage/app/public/products/`.  
+Run `php artisan storage:link` to make them publicly accessible.
+
+---
+
+## 🔧 Customisation Tips
+
+**Change store name** → update `APP_NAME` in `.env` and `config/app.php`
+
+**Add a new category** → Admin panel → Categories → Add New Category
+
+**Change delivery fee** → `App\Livewire\Shop\Cart.php` and `Checkout.php`, update the `deliveryFee()` method
+
+**Add payment gateway** (Paystack/Flutterwave) → Replace the card fields section in `livewire/shop/checkout.blade.php` with the gateway's inline JS SDK
+
+**Email notifications** → Configure `MAIL_*` in `.env`, then dispatch a Mailable in `Checkout.php` after `Order::create()`
+
+---
+
+## 🚀 Deployment Checklist
+
+```bash
+# Set production environment
+APP_ENV=production
+APP_DEBUG=false
+
+# Optimize
+composer install --no-dev --optimize-autoloader
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+npm run build
+
+# Storage
+php artisan storage:link
+```
+
+---
+
+Built by **EH Code** · ThreadHouse © 2025
