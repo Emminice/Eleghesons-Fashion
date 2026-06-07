@@ -52,18 +52,20 @@
 
         /* ── OVERLAY ───────────────────────────────────────── */
         .sidebar-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.55);
-            z-index: 300;
-            backdrop-filter: blur(2px);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        .sidebar-overlay.active {
-            opacity: 1;
-        }
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 300;
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+.sidebar-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
 
         /* ── SIDEBAR MOBILE OVERRIDES ──────────────────────── */
         @media (max-width: 768px) {
