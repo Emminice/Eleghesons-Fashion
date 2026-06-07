@@ -80,7 +80,13 @@ a { text-decoration: none; color: inherit; }
   border-radius: 10px;
   overflow: hidden;
   transition: border-color .2s;
+} 
+
+.table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
+
 .nav-search:focus-within { border-color: var(--orange); }
 .nav-search input {
   flex: 1;
