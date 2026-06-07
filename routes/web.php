@@ -72,6 +72,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
 
     // Settings
     Route::get('/settings',          [AdminController::class, 'settings'])->name('settings');
-Route::post('/settings/store',   [AdminController::class, 'updateStoreSettings'])->name('settings.store');
-Route::post('/settings/delivery',[AdminController::class, 'updateDeliverySettings'])->name('settings.delivery');
-Route::post('/settings/account', [AdminController::class, 'updateAdminAccount'])->name('settings.account');
+    Route::post('/settings/store',   [AdminController::class, 'updateStoreSettings'])->name('settings.store');
+    Route::post('/settings/delivery',[AdminController::class, 'updateDeliverySettings'])->name('settings.delivery');
+    Route::post('/settings/account', [AdminController::class, 'updateAdminAccount'])->name('settings.account'); 
+});                                                                        
