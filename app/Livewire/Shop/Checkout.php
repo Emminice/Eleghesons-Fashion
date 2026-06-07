@@ -47,7 +47,7 @@ class Checkout extends Component
             'address'       => 'required|string|max:255',
             'city'          => 'required|string|max:100',
             'state'         => 'required|string',
-            'paymentMethod' => 'required|in:pod,card,transfer',
+            'paymentMethod' => 'required|in:pod,transfer',
         ];
     }
 
