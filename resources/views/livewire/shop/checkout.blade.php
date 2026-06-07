@@ -78,30 +78,7 @@
                         <p>Cash when your order arrives</p>
                     </div>
                     <i class="fas fa-money-bill-wave"></i>
-                </div>
-
-                <div class="payment-method {{ $paymentMethod === 'card' ? 'active' : '' }}"
-                     wire:click="$set('paymentMethod','card')">
-                    <input type="radio" @checked($paymentMethod==='card')>
-                    <div class="payment-method-info">
-                        <h4>Debit / Credit Card</h4>
-                        <p>Visa, Mastercard, Verve</p>
-                    </div>
-                    <i class="fas fa-credit-card"></i>
-                </div>
-
-                @if($paymentMethod === 'card')
-                <div style="padding:16px;background:var(--bg);border-radius:10px;margin-bottom:12px">
-                    <div class="form-group">
-                        <label>Card Number</label>
-                        <input type="text" placeholder="1234 5678 9012 3456" maxlength="19">
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group"><label>Expiry</label><input type="text" placeholder="MM/YY" maxlength="5"></div>
-                        <div class="form-group"><label>CVV</label><input type="text" placeholder="•••" maxlength="3"></div>
-                    </div>
-                </div>
-                @endif
+                </div>       
 
                 <div class="payment-method {{ $paymentMethod === 'transfer' ? 'active' : '' }}"
                      wire:click="$set('paymentMethod','transfer')">
