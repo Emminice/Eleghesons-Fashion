@@ -46,11 +46,17 @@ class DashboardController extends Controller
     }
 
     public function updateOrderStatus(Request $request, Order $order)
-    {
-        $request->validate(['status' => 'required|in:pending,processing,shipped,delivered,cancelled']);
-        $order->update(['status' => $request->status]);
-        return back()->with('success', "Order #{$order->order_number} updated to {$request->status}.");
+{
+    if ($request->has('payment_status')) {
+        $request->validate(['payment_status' => 'required|in:unpaid,paid,refunded']);
+        $order->update(['payment_status' => $request->payment_status]);
+        return back()->with('success', "Order #{$order->order_number} marked as {$request->payment_status}.");
     }
+
+    $request->validate(['status' => 'required|in:pending,processing,shipped,delivered,cancelled']);
+    $order->update(['status' => $request->status]);
+    return back()->with('success', "Order #{$order->order_number} updated to {$request->status}.");
+}
 
     public function orderDetail(Order $order)
     {
