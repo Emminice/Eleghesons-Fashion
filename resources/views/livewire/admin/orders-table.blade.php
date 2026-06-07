@@ -52,12 +52,13 @@
                         <td style="white-space:nowrap">{{ $order->items->count() ?? '—' }} item(s)</td>
                         <td style="white-space:nowrap"><strong>₦{{ number_format($order->total, 2) }}</strong></td>
                         <td style="font-size:13px;white-space:nowrap">
-                            @match($order->payment_method)
-                                'pod' => 'On Delivery',
-                                'card' => 'Card',
-                                'transfer' => 'Transfer',
-                                default => ucfirst($order->payment_method)
-                            @endmatch
+                            @if($order->payment_method === 'pod')
+    Pay on Delivery
+@elseif($order->payment_method === 'transfer')
+    Bank Transfer
+@else
+    {{ ucfirst($order->payment_method) }}
+@endif
                         </td>
                         <td>
                             <select wire:change="updateStatus({{ $order->id }}, $event.target.value)"
