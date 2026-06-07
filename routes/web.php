@@ -39,8 +39,9 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
     Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
 
     // Orders
-    Route::get('/orders', [AdminController::class, 'orders'])->name('orders');
-    Route::patch('/orders/{order}/status', [AdminController::class, 'updateOrderStatus'])->name('orders.status');
+Route::get('/orders', [AdminController::class, 'orders'])->name('orders');
+Route::patch('/orders/{order}/status', [AdminController::class, 'updateOrderStatus'])->name('orders.status');
+Route::get('/orders/{order}', [AdminController::class, 'orderDetail'])->name('orders.detail'); // ADD THIS
 
     // Products
     Route::get('/products', [AdminController::class, 'products'])->name('products');
