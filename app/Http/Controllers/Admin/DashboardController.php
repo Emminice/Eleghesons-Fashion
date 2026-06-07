@@ -52,6 +52,12 @@ class DashboardController extends Controller
         return back()->with('success', "Order #{$order->order_number} updated to {$request->status}.");
     }
 
+    public function orderDetail(Order $order)
+    {
+        $order->load(['items', 'user']);
+        return view('admin.order-detail', compact('order'));
+    }
+
     // ── PRODUCTS ─────────────────────────────────
     public function products(Request $request)
     {
